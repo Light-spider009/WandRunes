@@ -4,6 +4,7 @@ import com.wandrunes.command.ManaCommand;
 import com.wandrunes.command.WandAdminCommand;
 import com.wandrunes.command.WandBagCommand;
 import com.wandrunes.command.WandRunesCommand;
+import com.wandrunes.gui.GUIListener;
 import com.wandrunes.listener.ManaListener;
 import com.wandrunes.listener.RuneListener;
 import com.wandrunes.listener.WandBagListener;
@@ -32,6 +33,7 @@ public class WandRunes extends JavaPlugin {
         instance = this;
         saveDefaultConfig();
 
+        // Init managers in correct order
         configManager = new ConfigManager(this);
         wandRegistry = new WandRegistry(this);
         manaManager = new ManaManager(this);
@@ -39,19 +41,23 @@ public class WandRunes extends JavaPlugin {
         runeManager = new RuneManager(this);
         dropManager = new DropManager(this);
 
+        // Register commands
         getCommand("wandrunes").setExecutor(new WandRunesCommand(this));
         getCommand("mana").setExecutor(new ManaCommand(this));
         getCommand("wanDbag").setExecutor(new WandBagCommand(this));
         getCommand("wandadmin").setExecutor(new WandAdminCommand(this));
 
+        // Register listeners
         getServer().getPluginManager().registerEvents(new WandUseListener(this), this);
         getServer().getPluginManager().registerEvents(new RuneListener(this), this);
         getServer().getPluginManager().registerEvents(new ManaListener(this), this);
         getServer().getPluginManager().registerEvents(new WandBagListener(this), this);
         getServer().getPluginManager().registerEvents(new WandCraftListener(this), this);
-        getServer().getPluginManager().registerEvents(new com.wandrunes.gui.GUIListener(this), this);
+        getServer().getPluginManager().registerEvents(new GUIListener(this), this);
 
+        // Start schedulers
         manaManager.startRegenScheduler();
+        manaManager.startActionBarScheduler(); // keeps mana bar permanently visible
         runeManager.startTickScheduler();
         wandManager.startParticleScheduler();
 
