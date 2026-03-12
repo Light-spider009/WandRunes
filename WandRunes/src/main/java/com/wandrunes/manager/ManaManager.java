@@ -72,15 +72,18 @@ public class ManaManager {
         refreshBar(uuid);
     }
 
-    private void refreshBar(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) return;
-        int mana = getMana(uuid);
-        int max = getMaxMana();
-        player.setLevel(mana);
-        player.setExp(Math.max(0f, Math.min(1f, (float) mana / max)));
-    }
-
+private void refreshBar(UUID uuid) {
+    Player player = Bukkit.getPlayer(uuid);
+    if (player == null) return;
+    int mana = getMana(uuid);
+    int max = getMaxMana();
+    player.setLevel(mana);
+    player.setExp(Math.max(0f, Math.min(1f, (float) mana / max)));
+    // Show mana as action bar text in light blue above XP bar
+    player.sendActionBar(
+        net.md_5.bungee.api.ChatColor.of("#00BFFF") + "✦ Mana: " + mana + " / " + max
+    );
+}
     public void startRegenScheduler() {
         int interval = plugin.getConfigManager().getRegenInterval();
         int amount = plugin.getConfigManager().getRegenAmount();
@@ -88,7 +91,13 @@ public class ManaManager {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    addMana(p.getUniqueId(), amount);
+addMana(p.getUniqueId(), amount);
+// Refresh action bar for all online players every regen tick
+int currentMana = getMana(p.getUniqueId());
+int maxMana = getMaxMana();
+p.sendActionBar(
+    net.md_5.bungee.api.ChatColor.of("#00BFFF") + "✦ Mana: " + currentMana + " / " + maxMana
+);
                 }
             }
         }.runTaskTimer(plugin, 20L, interval * 20L);
