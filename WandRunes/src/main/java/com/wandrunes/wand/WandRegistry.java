@@ -1,6 +1,7 @@
 package com.wandrunes.wand;
 
 import com.wandrunes.WandRunes;
+import com.wandrunes.rune.RuneType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -23,7 +24,6 @@ public class WandRegistry {
     public static final String WAND_BAG_KEY = "wandrunes_wand_bag";
     public static final String RUNE_KEY = "wandrunes_rune_id";
 
-    // Crafting material IDs
     public static final String MAT_ARCANE_DUST = "arcane_dust";
     public static final String MAT_SOUL_ESSENCE = "soul_essence";
     public static final String MAT_MANA_CRYSTAL = "mana_crystal";
@@ -36,6 +36,12 @@ public class WandRegistry {
 
     public WandRegistry(WandRunes plugin) {
         this.plugin = plugin;
+    }
+
+    private void applyGlow(ItemMeta meta) {
+        // Use DURABILITY as a safe glowing enchant across all 1.20 builds
+        meta.addEnchant(Enchantment.DURABILITY, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
     }
 
     public ItemStack createWand(WandType type, int level) {
@@ -53,10 +59,9 @@ public class WandRegistry {
         lore.add(ChatColor.YELLOW + "▶ Right-click to cast");
         lore.add(ChatColor.YELLOW + "▶ Hold right-click to charge (2x power)");
         lore.add(ChatColor.GRAY + "⸻⸻⸻⸻⸻⸻⸻");
-
         meta.setLore(lore);
-        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        applyGlow(meta);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
 
         NamespacedKey wandKey = new NamespacedKey(plugin, WAND_KEY);
         NamespacedKey levelKey = new NamespacedKey(plugin, WAND_LEVEL_KEY);
@@ -78,11 +83,10 @@ public class WandRegistry {
         lore.add(ChatColor.WHITE + "Effect: " + type.getColor() + type.getDescription());
         lore.add(ChatColor.GRAY + "⸻⸻⸻⸻⸻⸻⸻");
         lore.add(ChatColor.YELLOW + "▶ Place on ground to activate");
-        lore.add(ChatColor.YELLOW + "▶ Right-click wand on rune to bind");
         lore.add(ChatColor.GRAY + "⸻⸻⸻⸻⸻⸻⸻");
         meta.setLore(lore);
-        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        applyGlow(meta);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         NamespacedKey key = new NamespacedKey(plugin, RUNE_KEY);
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, type.getId());
         item.setItemMeta(meta);
@@ -97,8 +101,8 @@ public class WandRegistry {
             ChatColor.GRAY + description,
             ChatColor.DARK_PURPLE + "✨ WandRunes Material"
         ));
-        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        applyGlow(meta);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         NamespacedKey key = new NamespacedKey(plugin, CUSTOM_MAT_KEY);
         meta.getPersistentDataContainer().set(key, PersistentDataType.STRING, matId);
         item.setItemMeta(meta);
@@ -114,8 +118,8 @@ public class WandRegistry {
             ChatColor.YELLOW + "▶ Right-click to open",
             ChatColor.DARK_PURPLE + "✨ WandRunes Item"
         ));
-        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES);
+        applyGlow(meta);
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         NamespacedKey key = new NamespacedKey(plugin, WAND_BAG_KEY);
         meta.getPersistentDataContainer().set(key, PersistentDataType.INTEGER, 1);
         item.setItemMeta(meta);
@@ -145,6 +149,7 @@ public class WandRegistry {
 
     public boolean isWand(ItemStack item) { return getWandId(item) != null; }
     public boolean isRune(ItemStack item) { return getRuneId(item) != null; }
+
     public boolean isWandBag(ItemStack item) {
         if (item == null || !item.hasItemMeta()) return false;
         NamespacedKey key = new NamespacedKey(plugin, WAND_BAG_KEY);
