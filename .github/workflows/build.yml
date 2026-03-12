@@ -1,4 +1,4 @@
-name: Build EconomyPlus Plugin
+name: Build WandRunes Plugin
 
 on:
   push:
@@ -25,10 +25,10 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean package -DskipTests --no-transfer-progress
-        working-directory: EconomyPlus
+        working-directory: WandRunes
 
       - name: Upload JAR artifact
         uses: actions/upload-artifact@v4
         with:
-          name: EconomyPlus
-          path: EconomyPlus/target/EconomyPlus.jar
+          name: WandRunes
+          path: WandRunes/target/WandRunes.jar
