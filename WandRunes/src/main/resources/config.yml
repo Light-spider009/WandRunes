@@ -1,15 +1,15 @@
 # WandRunes Configuration
 
 mana:
-  max-mana: 100
-  regen-amount: 1
-  regen-interval-seconds: 4
-  mob-kill-bonus: 5
-  player-kill-bonus: 15
-  boss-kill-bonus: 30
+  max-mana: 500
+  regen-amount: 3
+  regen-interval-seconds: 1
+  mob-kill-bonus: 10
+  player-kill-bonus: 50
+  boss-kill-bonus: 35
 
 wands:
-  overheat-cast-limit: 5
+  overheat-cast-limit: 100
   overheat-cooldown-seconds: 10
   charge-time-ticks: 40
   charged-power-multiplier: 2.0
