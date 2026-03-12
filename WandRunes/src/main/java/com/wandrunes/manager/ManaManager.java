@@ -1,6 +1,8 @@
 package com.wandrunes.manager;
 
 import com.wandrunes.WandRunes;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.chat.ComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -28,7 +30,12 @@ public class ManaManager {
 
     private void loadData() {
         if (!dataFile.exists()) {
-            try { dataFile.getParentFile().mkdirs(); dataFile.createNewFile(); } catch (IOException e) { e.printStackTrace(); }
+            try {
+                dataFile.getParentFile().mkdirs();
+                dataFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         dataConfig = YamlConfiguration.loadConfiguration(dataFile);
         if (dataConfig.contains("mana")) {
@@ -42,7 +49,11 @@ public class ManaManager {
         for (Map.Entry<UUID, Integer> entry : manaMap.entrySet()) {
             dataConfig.set("mana." + entry.getKey(), entry.getValue());
         }
-        try { dataConfig.save(dataFile); } catch (IOException e) { e.printStackTrace(); }
+        try {
+            dataConfig.save(dataFile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public int getMana(UUID uuid) {
@@ -72,32 +83,42 @@ public class ManaManager {
         refreshBar(uuid);
     }
 
-private void refreshBar(UUID uuid) {
-    Player player = Bukkit.getPlayer(uuid);
-    if (player == null) return;
-    int mana = getMana(uuid);
-    int max = getMaxMana();
-    player.setLevel(mana);
-    player.setExp(Math.max(0f, Math.min(1f, (float) mana / max)));
-    // Show mana as action bar text in light blue above XP bar
-    player.sendActionBar(
-        net.md_5.bungee.api.ChatColor.of("#00BFFF") + "✦ Mana: " + mana + " / " + max
-    );
-}
+    private void refreshBar(UUID uuid) {
+        Player player = Bukkit.getPlayer(uuid);
+        if (player == null) return;
+        int mana = getMana(uuid);
+        int max = getMaxMana();
+
+        // Update XP bar
+        player.setLevel(mana);
+        player.setExp(Math.max(0f, Math.min(1f, (float) mana / max)));
+
+        // Show mana above XP bar as action bar in light blue
+        String json = "[{\"text\":\"\\u2726 Mana: " + mana + " / " + max + "\",\"color\":\"aqua\"}]";
+        player.spigot().sendMessage(
+            ChatMessageType.ACTION_BAR,
+            ComponentSerializer.parse(json)
+        );
+    }
+
     public void startRegenScheduler() {
         int interval = plugin.getConfigManager().getRegenInterval();
         int amount = plugin.getConfigManager().getRegenAmount();
+
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
-addMana(p.getUniqueId(), amount);
-// Refresh action bar for all online players every regen tick
-int currentMana = getMana(p.getUniqueId());
-int maxMana = getMaxMana();
-p.sendActionBar(
-    net.md_5.bungee.api.ChatColor.of("#00BFFF") + "✦ Mana: " + currentMana + " / " + maxMana
-);
+                    addMana(p.getUniqueId(), amount);
+
+                    // Refresh action bar for all online players every regen tick
+                    int currentMana = getMana(p.getUniqueId());
+                    int maxMana = getMaxMana();
+                    String json = "[{\"text\":\"\\u2726 Mana: " + currentMana + " / " + maxMana + "\",\"color\":\"aqua\"}]";
+                    p.spigot().sendMessage(
+                        ChatMessageType.ACTION_BAR,
+                        ComponentSerializer.parse(json)
+                    );
                 }
             }
         }.runTaskTimer(plugin, 20L, interval * 20L);
