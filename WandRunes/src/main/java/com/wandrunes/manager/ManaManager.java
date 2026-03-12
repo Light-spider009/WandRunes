@@ -68,32 +68,21 @@ public class ManaManager {
         int current = getMana(uuid);
         if (current < amount) return false;
         manaMap.put(uuid, current - amount);
-        refreshBar(uuid);
         return true;
     }
 
     public void addMana(UUID uuid, int amount) {
         int max = getMaxMana();
         manaMap.put(uuid, Math.min(getMana(uuid) + amount, max));
-        refreshBar(uuid);
     }
 
     public void setMana(UUID uuid, int amount) {
         manaMap.put(uuid, Math.max(0, Math.min(amount, getMaxMana())));
-        refreshBar(uuid);
     }
 
-    private void refreshBar(UUID uuid) {
-        Player player = Bukkit.getPlayer(uuid);
-        if (player == null) return;
-        int mana = getMana(uuid);
+    private void sendManaBar(Player player) {
+        int mana = getMana(player.getUniqueId());
         int max = getMaxMana();
-
-        // Update XP bar
-        player.setLevel(mana);
-        player.setExp(Math.max(0f, Math.min(1f, (float) mana / max)));
-
-        // Show mana above XP bar as action bar in light blue
         String json = "[{\"text\":\"\\u2726 Mana: " + mana + " / " + max + "\",\"color\":\"aqua\"}]";
         player.spigot().sendMessage(
             ChatMessageType.ACTION_BAR,
@@ -101,26 +90,29 @@ public class ManaManager {
         );
     }
 
+    // Regens mana every interval — XP bar is never touched
     public void startRegenScheduler() {
         int interval = plugin.getConfigManager().getRegenInterval();
         int amount = plugin.getConfigManager().getRegenAmount();
-
         new BukkitRunnable() {
             @Override
             public void run() {
                 for (Player p : Bukkit.getOnlinePlayers()) {
                     addMana(p.getUniqueId(), amount);
-
-                    // Refresh action bar for all online players every regen tick
-                    int currentMana = getMana(p.getUniqueId());
-                    int maxMana = getMaxMana();
-                    String json = "[{\"text\":\"\\u2726 Mana: " + currentMana + " / " + maxMana + "\",\"color\":\"aqua\"}]";
-                    p.spigot().sendMessage(
-                        ChatMessageType.ACTION_BAR,
-                        ComponentSerializer.parse(json)
-                    );
                 }
             }
         }.runTaskTimer(plugin, 20L, interval * 20L);
+    }
+
+    // Keeps the action bar permanently visible by refreshing every second
+    public void startActionBarScheduler() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    sendManaBar(p);
+                }
+            }
+        }.runTaskTimer(plugin, 20L, 20L);
     }
 }
