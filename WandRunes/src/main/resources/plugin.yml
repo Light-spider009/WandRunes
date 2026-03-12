@@ -1,0 +1,31 @@
+name: WandRunes
+version: 1.0.0
+main: com.wandrunes.WandRunes
+api-version: 1.20
+description: Wand and Magic Circle plugin with mana, spells, runes and grimoire GUI
+author: WandRunes
+
+commands:
+  wandrunes:
+    description: Open the Grimoire GUI
+    usage: /wandrunes
+    aliases: [wr, grimoire]
+  mana:
+    description: Check your mana
+    usage: /mana [player]
+  wanDbag:
+    description: Open your wand bag
+    usage: /wandbag
+    aliases: [wb]
+  wandadmin:
+    description: Open the admin control panel
+    usage: /wandadmin
+    aliases: [wadmin]
+
+permissions:
+  wandrunes.use:
+    description: Use WandRunes features
+    default: true
+  wandrunes.admin:
+    description: Admin control panel
+    default: op

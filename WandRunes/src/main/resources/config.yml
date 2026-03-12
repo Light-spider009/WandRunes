@@ -1,0 +1,103 @@
+# WandRunes Configuration
+
+mana:
+  max-mana: 100
+  regen-amount: 1
+  regen-interval-seconds: 4
+  mob-kill-bonus: 5
+  player-kill-bonus: 15
+  boss-kill-bonus: 30
+
+wands:
+  overheat-cast-limit: 5
+  overheat-cooldown-seconds: 10
+  charge-time-ticks: 40
+  charged-power-multiplier: 2.0
+
+  # Toggle individual wands (true = enabled)
+  ember: true
+  storm: true
+  frost: true
+  blink: true
+  venom: true
+  gravity: true
+  soul: true
+  void: true
+  wind: true
+  arcane: true
+
+  # Power level per wand: WEAK, NORMAL, STRONG
+  ember-power: NORMAL
+  storm-power: NORMAL
+  frost-power: NORMAL
+  blink-power: NORMAL
+  venom-power: NORMAL
+  gravity-power: NORMAL
+  soul-power: NORMAL
+  void-power: NORMAL
+  wind-power: NORMAL
+  arcane-power: NORMAL
+
+  # Mana costs
+  ember-mana: 15
+  storm-mana: 20
+  frost-mana: 12
+  blink-mana: 10
+  venom-mana: 12
+  gravity-mana: 18
+  soul-mana: 25
+  void-mana: 20
+  wind-mana: 15
+  arcane-mana: 8
+
+  # World blacklist per wand (comma separated world names)
+  ember-blacklist: ""
+  storm-blacklist: ""
+  frost-blacklist: ""
+  blink-blacklist: ""
+  venom-blacklist: ""
+  gravity-blacklist: ""
+  soul-blacklist: ""
+  void-blacklist: ""
+  wind-blacklist: ""
+  arcane-blacklist: ""
+
+runes:
+  # Toggle individual rune circles
+  healing: true
+  inferno: true
+  storm: true
+  speed: true
+  barrier: true
+  curse: true
+  summon: true
+  time: true
+
+  # Power level per rune: WEAK, NORMAL, STRONG
+  healing-power: NORMAL
+  inferno-power: NORMAL
+  storm-power: NORMAL
+  speed-power: NORMAL
+  barrier-power: NORMAL
+  curse-power: NORMAL
+  summon-power: NORMAL
+  time-power: NORMAL
+
+drops:
+  soul-essence-chance: 0.4
+  void-fragment-chance: 0.15
+  chrono-shard-chance: 0.20
+  storm-core-chance: 1.0
+  frost-heart-chance: 0.5
+  ember-core-chance: 0.6
+
+messages:
+  prefix: "&5[&dWandRunes&5] &r"
+  no-permission: "&cYou don't have permission!"
+  not-enough-mana: "&cNot enough mana! &eNeed {needed}, have {current}."
+  wand-disabled: "&cThis wand is disabled on this server."
+  wand-blacklisted: "&cYou cannot use this wand in this world."
+  overheat: "&cYour wand is overheating! &eCooldown: {seconds}s"
+  spell-discovered: "&dYou discovered a new spell: &5{spell}!"
+  wand-levelup: "&dYour {wand} leveled up to &5Level {level}&d!"
+  wand-mastered: "&6✦ You have mastered the {wand}! Title unlocked: &e{title}"
